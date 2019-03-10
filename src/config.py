@@ -3,12 +3,12 @@ import os
 
 class Config:
     SECRET_KEY = os.getenv('SECRET_KEY')
-    DB_NAME = ''
-    DB_USERNAME = ''
-    DB_PASSWORD = ''
-    DB_HOST = ''
-    DB_URI = ''
-    SQLALCHEMY_DATABASE_URI = ''
+    DB_NAME = os.getenv('DB_NAME')
+    DB_USERNAME = os.getenv('DB_USERNAME')
+    DB_PASSWORD = os.getenv('DB_PASSWORD')
+    DB_HOST = os.getenv('DB_HOST')
+    DB_URI = f'postgresql://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}'
+    SQLALCHEMY_DATABASE_URI = DB_URI
     PAGINATION_PAGE_SIZE = 5
     PAGINATION_PAGE_ARGUMENT_NAME = 'page'
 
