@@ -10,6 +10,8 @@ bcrypt = Bcrypt()
 def create_app(env='dev'):
     from .models import db
     from .models.user import User
+    from .models.todo import Todo
+    from .models.category import Category
 
     # app instance
     app = Flask(__name__)

@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from . import db
 from .. import bcrypt
 
@@ -14,8 +16,9 @@ class User(db.Model):
     username = db.Column(db.String(100), unique=True, nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     hash_password = db.Column(db.String(100), nullable=False)
-    registered_on = db.Column(db.DateTime, nullable=False)
+    registered_on = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     admin = db.Column(db.Boolean, nullable=False, default=False)
+    todos = db.relationship('Todo', backref='user', lazy=True, cascade='delete')
 
     @property
     def password(self):
