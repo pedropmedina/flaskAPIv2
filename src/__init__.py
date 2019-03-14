@@ -12,6 +12,7 @@ def create_app(env='dev'):
     from .models.user import User
     from .models.todo import Todo
     from .models.category import Category
+    from .resources import bp
 
     # app instance
     app = Flask(__name__)
@@ -27,5 +28,8 @@ def create_app(env='dev'):
 
     # bcrypt initialization
     bcrypt.init_app(app)
+
+    # register blueprint
+    app.register_blueprint(bp)
 
     return app
