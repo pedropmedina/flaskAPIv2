@@ -5,7 +5,7 @@ from ..models import db
 from ..models.user import User
 
 ns = Namespace('user', description='/users related requests')
-userschema = ns.model(
+user_fields_default = ns.model(
     'User',
     {
         'username': fields.String(required=True, min_length=5, max_length=50),
@@ -20,7 +20,7 @@ userschema = ns.model(
 @ns.param('public_id', 'User\'s public identifier')
 @ns.response(404, 'No user found with given identifier')
 class UserResource(Resource):
-    @ns.marshal_with(userschema, envelope='data', skip_none=True)
+    @ns.marshal_with(user_fields_default, envelope='data', skip_none=True)
     def get(self, public_id):
         user = User.query.filter_by(public_id=public_id).first()
         if not user:
@@ -36,7 +36,7 @@ class UserResource(Resource):
         db.session.commit()
         return make_response('', 204)  # No Content
 
-    @ns.marshal_with(userschema, envelope='data', skip_none=True)
+    @ns.marshal_with(user_fields_default, envelope='data', skip_none=True)
     def patch(self, public_id):
         user = User.query.filter_by(public_id=public_id).first()
         if not user:
@@ -57,12 +57,12 @@ class UserResource(Resource):
 
 @ns.route('/')
 class UserListResource(Resource):
-    @ns.marshal_list_with(userschema, envelope='data', skip_none=True)
+    @ns.marshal_list_with(user_fields_default, envelope='data', skip_none=True)
     def get(self):
         users = User.query.all()
         return users
 
-    @ns.expect(userschema, validate=True)
+    @ns.expect(user_fields_default, validate=True)
     @ns.response('201', 'User was successfully created.')
     def post(self):
         data = request.json
