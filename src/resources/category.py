@@ -19,8 +19,15 @@ duplicate_category_message = 'Category of name "{}" already exists.'
 @ns.param('id', 'Category\'s identifier.')
 @ns.response(404, category_not_found_message)
 class CategoryResource(Resource):
+    '''
+    Resources to deal with enpoints that provide id param
+    '''
+
     @ns.marshal_with(category_fields_default, envelope='data', skip_none=True)
     def get(self, id):
+        '''
+        Retrieve category by its id
+        '''
         category = Category.query.get(id)
         if not category:
             ns.abort(404, category_not_found_message)
@@ -28,6 +35,9 @@ class CategoryResource(Resource):
 
     @ns.marshal_with(category_fields_default, envelope='data', skip_none=True)
     def patch(self, id):
+        '''
+        Patch part of the category requestd by id
+        '''
         try:
             category = Category.query.get(id)
             if not category:
@@ -45,6 +55,9 @@ class CategoryResource(Resource):
             return {'status': 'fail', 'message': str(err)}, 400
 
     def delete(self, id):
+        '''
+        Delete category from db by its ID.
+        '''
         try:
             category = Category.query.get(id)
             if not category:
@@ -60,13 +73,23 @@ class CategoryResource(Resource):
 
 @ns.route('/')
 class CategoryListResource(Resource):
+    '''
+    Resources for dealing with categories that require no identifier
+    '''
+
     @ns.marshal_list_with(category_fields_default, envelope='data', skip_none=True)
     def get(self):
+        '''
+        Get all categories in db for given user
+        '''
         categories = Category.query.all()
         return categories
 
     @ns.expect(category_fields_default, validate=True)
     def post(self):
+        '''
+        Add a new category to the db
+        '''
         try:
             data = request.json
 
@@ -86,6 +109,5 @@ class CategoryListResource(Resource):
             db.session.commit()
             return {'status': 'success', 'message': 'category was created.'}, 201
         except SQLAlchemyError as err:
-            print(str(err))
             db.session.rollback()
             return {'status': 'fail', 'message': str(err)}, 400
