@@ -17,4 +17,4 @@ api = Api(
 
 api.add_namespace(ns_user, path='/users')
 api.add_namespace(ns_todo, path='/todos')
-api.add_namespace(ns_category, path='/category')
+api.add_namespace(ns_category, path='/categories')

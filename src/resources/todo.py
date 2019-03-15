@@ -11,16 +11,18 @@ ns = Namespace('todo', description='Todo\'s related endpoint operations.')
 todo_fields_default = ns.model(
     'Todo', {'name': fields.String(required=True, min_length=2)}
 )
-todo_fields_nested_models = todo_fields_default.clone(
+todo_fields_nested_models = ns.inherit(
     'TodoNestedUser',
+    todo_fields_default,
     {
         'id': fields.Integer,
         'user': fields.Nested(user_fields_default, skip_none=True),
         'category': fields.Nested(category_fields_default, skip_none=True),
     },
 )
-todo_fields_not_nested_models = todo_fields_default.clone(
+todo_fields_not_nested_models = ns.inherit(
     'TodoUserPublicId',
+    todo_fields_default,
     {
         'user': fields.String(required=True),
         'category': fields.String(min_length=2, required=True),
