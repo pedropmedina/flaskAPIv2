@@ -39,7 +39,7 @@ class TodoResource(Resource):
             ns.abort(404, custom='No todo exists with given id')
         return todo
 
-    @ns.marshal_with(todo_fields_nested_models, skip_none=True)
+    @ns.marshal_with(todo_fields_nested_models, envelope='data', skip_none=True)
     def patch(self, id):
         todo = Todo.query.get(id)
         if not todo:
@@ -48,6 +48,7 @@ class TodoResource(Resource):
         name = data.get('name')
         if name:
             todo.name = name
+            db.session.commit()
         return todo
 
     def delete(self, id):
@@ -55,7 +56,8 @@ class TodoResource(Resource):
         if not todo:
             ns.abort(404, custom='No todo exists with given id.')
         db.session.delete(todo)
-        db.commit()
+        db.session.commit()
+        return {'status': 'success', 'message': 'Todo was deleted.'}
 
 
 @ns.route('/')
