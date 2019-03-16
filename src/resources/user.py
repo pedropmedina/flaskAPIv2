@@ -81,5 +81,5 @@ class UserListResource(Resource):
             )
             db.session.add(new_user)
             db.session.commit()
-            response_dict = {'status': 'success', 'message': 'User was created'}
-            return response_dict, 201  # Created
+            token = User.jwt_encode(user_id=new_user.id, admin=new_user.admin)
+            return ({'status': 'success', 'message': token}, 201)  # Created
