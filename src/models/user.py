@@ -5,6 +5,7 @@ import jwt
 from . import db
 from .. import bcrypt
 from ..config import secret_key
+from .blacklist import Blacklist
 
 
 class User(db.Model):
@@ -36,17 +37,32 @@ class User(db.Model):
         return bcrypt.check_password_hash(self.hash_password, password)
 
     @staticmethod
-    def jwt_encode(user_id, admin=False):
+    def jwt_encode(user_id):
         payload = {
-            'sub': {'user_id': user_id, 'admin': admin},
+            'sub': user_id,
             'iat': datetime.utcnow(),
             'exp': datetime.utcnow() + timedelta(days=1),
         }
-        # jwt.encode returns <class 'bytes'>, must decode to send in response
+        # jwt.encode returns <class 'bytes'>, must decode to send in response as str
         return jwt.encode(payload, secret_key, algorithm='HS256').decode('utf-8')
 
     @staticmethod
     def jwt_decode(token):
-        decoded = jwt.decode(token, secret_key, algorithms=['HS256'])
-        sub = decoded['sub']
-        return sub
+        '''
+        Decode provided token.
+        If error, return type string <class 'str'>,
+        else return user id <class 'int'>.
+        In the auth resource, check instance and
+        respond in accordance to the type.
+        '''
+        try:
+            # Ckeck if token is blacklisted, and if so send err msg, else send sub int
+            is_blacklisted = Blacklist.check_blacklist(token)
+            if is_blacklisted:
+                return 'Token is blacklisted. Login again.'
+            payload = jwt.decode(token, secret_key, algorithms=['HS256'])
+            return payload['sub']
+        except jwt.ExpiredSignatureError:
+            return 'Token has expired. Login again.'
+        except jwt.InvalidTokenError:
+            return 'Invalid token. Login again.'

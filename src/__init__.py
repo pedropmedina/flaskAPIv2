@@ -12,6 +12,7 @@ def create_app(env='dev'):
     from .models.user import User
     from .models.todo import Todo
     from .models.category import Category
+    from .models.blacklist import Blacklist
     from .resources import bp
 
     # app instance
