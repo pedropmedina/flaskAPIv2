@@ -152,6 +152,9 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+# Uploads
+src/uploads/
+
 ### Python ###
 # Byte-compiled / optimized / DLL files
 

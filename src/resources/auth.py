@@ -1,7 +1,7 @@
 from flask import request
 from flask_restplus import Namespace, Resource, fields
 
-from ..helpers.authentication import Auth
+from ..helpers.authentication import Authentication
 
 ns = Namespace('auth', description='/auth related operations.')
 login_default_fields = ns.model(
@@ -28,7 +28,7 @@ class UserLogin(Resource):
         Handle login operations and return token in the body of the response
         '''
         data = request.json
-        return Auth.login_user_helper(
+        return Authentication.login_user_helper(
             username=data['username'], password=data['password']
         )
 
@@ -44,4 +44,4 @@ class UserLogout(Resource):
         Handle logout operations returning user information or err msg
         '''
         auth_header = request.headers.get('Authorization')
-        return Auth.logout_user_helper(auth_header)
+        return Authentication.logout_user_helper(auth_header)

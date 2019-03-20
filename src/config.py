@@ -11,6 +11,10 @@ class Config:
     SQLALCHEMY_DATABASE_URI = DB_URI
     PAGINATION_PAGE_SIZE = 5
     PAGINATION_PAGE_ARGUMENT_NAME = 'page'
+    UPLOAD_FOLDER = (
+        '/Users/pedropmedina/Documents/playground/python/flask/flaskAPIv2/src/uploads'
+    )
+    ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
 
 class DevConfig(Config):
@@ -29,5 +33,8 @@ class ProdConfig(Config):
     SWAGGER_URL = None
 
 
+upload_folder = Config.UPLOAD_FOLDER
+allowed_extensions = Config.ALLOWED_EXTENSIONS
 secret_key = Config.SECRET_KEY
+
 envsconfig = dict(dev=DevConfig, test=TestConfig, prod=ProdConfig)

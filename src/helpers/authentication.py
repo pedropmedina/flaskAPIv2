@@ -3,7 +3,7 @@ from ..models.user import User
 from ..models.blacklist import Blacklist
 
 
-class Auth:
+class Authentication:
     # handle logging in
     @staticmethod
     def login_user_helper(username, password):
@@ -77,13 +77,16 @@ class Auth:
             return {'status': 'fail', 'message': userid_or_err_msg}, 401
 
         user = User.query.get(userid_or_err_msg)
-        return {
-            'status': 'success',
-            'data': {
-                'user_id': user.id,
-                'username': user.username,
-                'email': user.email,
-                'admin': user.admin,
-                'registered_on': str(user.registered_on),
+        return (
+            {
+                'status': 'success',
+                'data': {
+                    'user_id': user.id,
+                    'username': user.username,
+                    'email': user.email,
+                    'admin': user.admin,
+                    'registered_on': str(user.registered_on),
+                },
             },
-        }
+            200,
+        )

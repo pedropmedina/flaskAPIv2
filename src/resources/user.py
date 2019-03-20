@@ -1,5 +1,6 @@
 from flask_restplus import Namespace, fields, Resource
 from flask import request, make_response
+from werkzeug.utils import secure_filename
 
 from ..models import db
 from ..models.user import User
@@ -12,6 +13,7 @@ user_fields_default = ns.model(
         'email': fields.String(required=True),
         'public_id': fields.String,
         'password': fields.String,
+        'profile_img': fields.String,
     },
 )
 

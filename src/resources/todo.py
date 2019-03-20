@@ -1,11 +1,14 @@
-from flask import request
+from flask import request, g
 from flask_restplus import Namespace, fields, Resource
 
 from ..models import db
 from ..models.todo import Todo
 from ..models.category import Category
+
 from .user import user_fields_default, User
 from .category import category_fields_default
+
+from ..helpers.authorization import Authorization
 
 ns = Namespace('todo', description='Todo\'s related endpoint operations.')
 todo_fields_default = ns.model(
@@ -64,9 +67,10 @@ class TodoResource(Resource):
 
 @ns.route('/')
 class TodoListResource(Resource):
+    @Authorization.authorize_user
     @ns.marshal_list_with(todo_fields_nested_models, envelope='data', skip_none=True)
     def get(self):
-        todos = Todo.query.all()
+        todos = Todo.query.filter_by(user_id=g.user['user_id']).all()
         return todos
 
     @ns.expect(todo_fields_not_nested_models, validate=True)

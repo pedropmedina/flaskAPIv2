@@ -23,6 +23,7 @@ class User(db.Model):
     registered_on = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     admin = db.Column(db.Boolean, nullable=False, default=False)
     todos = db.relationship('Todo', backref='user', lazy=True, cascade='delete')
+    profile_img = db.Column(db.String, unique=True)
 
     @property
     def password(self):
