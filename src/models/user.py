@@ -6,6 +6,7 @@ from . import db
 from .. import bcrypt
 from ..config import secret_key
 from .blacklist import Blacklist
+from .todo import Todo
 
 
 class User(db.Model):
@@ -22,7 +23,7 @@ class User(db.Model):
     hash_password = db.Column(db.String(100), nullable=False)
     registered_on = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     admin = db.Column(db.Boolean, nullable=False, default=False)
-    todos = db.relationship('Todo', backref='user', lazy=True, cascade='delete')
+    todos = db.relationship(Todo, backref='user', lazy=True, cascade='delete')
     profile_img = db.Column(db.String, unique=True)
 
     @property

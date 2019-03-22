@@ -30,7 +30,6 @@ class UploadListFiles(Resource):
         if file and allowed_files(file.filename):
             # get the current user to update the profile_img
             user = User.query.get(g.user['user_id'])
-            print('user ----> ', user)
             filename = secure_filename(file.filename).lower()
             user.profile_img = f'/api/v1/uploads/{filename}'
             db.session.commit()

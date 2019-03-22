@@ -69,7 +69,7 @@ class Authentication:
             token = auth_header.split(' ')[1]
 
         if not token:
-            return {'status': 'fail', 'message': 'No token provided'}, 400
+            return {'status': 'fail', 'message': 'No token provided'}, 401
 
         userid_or_err_msg = User.jwt_decode(token=token)
 

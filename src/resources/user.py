@@ -4,6 +4,7 @@ from werkzeug.utils import secure_filename
 
 from ..models import db
 from ..models.user import User
+from ..helpers.authorization import Authorization
 
 ns = Namespace('user', description='/users related requests')
 user_fields_default = ns.model(
@@ -18,7 +19,7 @@ user_fields_default = ns.model(
 )
 
 
-@ns.route('/<public_id>')
+@ns.route('/<public_id>', endpoint='user_resource')
 @ns.param('public_id', 'User\'s public identifier')
 @ns.response(404, 'No user found with given identifier')
 class UserResource(Resource):
@@ -57,8 +58,9 @@ class UserResource(Resource):
         return user
 
 
-@ns.route('/')
+@ns.route('/', endpoint='user_list_resource')
 class UserListResource(Resource):
+    @Authorization.authorize_user
     @ns.marshal_list_with(user_fields_default, envelope='data', skip_none=True)
     def get(self):
         users = User.query.all()
@@ -83,5 +85,5 @@ class UserListResource(Resource):
             )
             db.session.add(new_user)
             db.session.commit()
-            token = User.jwt_encode(user_id=new_user.id, admin=new_user.admin)
+            token = User.jwt_encode(user_id=new_user.id)
             return ({'status': 'success', 'message': token}, 201)  # Created
