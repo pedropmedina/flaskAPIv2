@@ -118,7 +118,7 @@ def test_update_user(client):
     user = User.query.get(user_id)
 
     url = url_for('api.user_resource', public_id=user.public_id, _external=True)
-    data = dict(username='georgewashinton')
+    data = dict(username='georgewashinton', email='george@gmail.com')
     patch_user_response = client.patch(
         url, headers=get_accept_content_type_headers(), data=json.dumps(data)
     )
@@ -127,3 +127,22 @@ def test_update_user(client):
     ]
     assert patch_user_response.status_code == 200
     assert patch_user_response_data['username'] == 'georgewashinton'
+    assert patch_user_response_data['email'] == 'george@gmail.com'
+
+
+def test_delete_user(client):
+    '''
+    GIVEN the requested user
+    WHEN (DELETE) '/api/v1/users/<public_id>'
+    THEN delete user from db and return status code 204
+    '''
+    create_user_response = create_user(client, TEST_USERNAME, TEST_EMAIL, TEST_PASSWORD)
+    create_user_response_data = json.loads(create_user_response.get_data(as_text=True))
+
+    token = create_user_response_data['message']
+    user_id = User.jwt_decode(token)
+    user = User.query.get(user_id)
+
+    url = url_for('api.user_resource', public_id=user.public_id, _external=True)
+    delete_user_response = client.delete(url, headers=get_accept_content_type_headers())
+    assert delete_user_response.status_code == 204
