@@ -61,6 +61,7 @@ class UserResource(Resource):
 @ns.route('/', endpoint='user_list_resource')
 class UserListResource(Resource):
     @Authorization.authorize_user
+    @Authorization.authorize_admin
     @ns.marshal_list_with(user_fields_default, envelope='data', skip_none=True)
     def get(self):
         users = User.query.all()

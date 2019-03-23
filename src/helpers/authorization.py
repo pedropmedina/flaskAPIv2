@@ -22,3 +22,35 @@ class Authorization:
             return func(*args, **kwargs)
 
         return decorated
+
+    @staticmethod
+    def authorize_admin(func):
+        @wraps(func)
+        def decorated(*args, **kwargs):
+            if not g.user['admin']:
+                return (
+                    {'status': 'fail', 'message': 'You don\'t have admin privileges.'},
+                    401,
+                )
+
+            return func(*args, **kwargs)
+
+        return decorated
+
+    #   def authorize_admin(func):
+    #       @wraps(func)
+    #       def decorated(*args, **kwargs):
+    #           data, status_code = Authentication.get_current_user_helper(request)
+    #           user_info = data.get('data')
+
+    #           if not user_info:
+    #               return data, status_code
+
+    #           if not user_info['admin']:
+    #               return {'status': 'fail', 'message': 'You don\'t have admin privileges'}
+
+    #           g.user = user_info
+
+    #           return func(*args, **kwargs)
+
+    #       return decorated
