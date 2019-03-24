@@ -1,5 +1,5 @@
 from flask_restplus import Namespace, fields, Resource
-from flask import request, make_response
+from flask import request, make_response, g
 from werkzeug.utils import secure_filename
 
 from ..models import db
@@ -23,24 +23,36 @@ user_fields_default = ns.model(
 @ns.param('public_id', 'User\'s public identifier')
 @ns.response(404, 'No user found with given identifier')
 class UserResource(Resource):
+    @Authorization.authorize_user
     @ns.marshal_with(user_fields_default, envelope='data', skip_none=True)
     def get(self, public_id):
+        if g.user['public_id'] != public_id and not g.user['admin']:
+            ns.abort(401, custom='You don\'t have access to this info.')
+
         user = User.query.filter_by(public_id=public_id).first()
         if not user:
             ns.abort(404, custom='No user found with the provided identifier.')
         return user
 
+    @Authorization.authorize_user
     @ns.response(204, 'User was deleted.')
     def delete(self, public_id):
+        if g.user['public_id'] != public_id and not g.user['admin']:
+            ns.abort(401, custom='No user found with the provided identifier.')
+
         user = User.query.filter_by(public_id=public_id).first()
         if not user:
-            ns.abort(404, custom='No user found with the provided identifier.')
+            ns.abort(404, custom='You don\'t have access to this info.')
         db.session.delete(user)
         db.session.commit()
         return make_response('', 204)  # No Content
 
+    @Authorization.authorize_user
     @ns.marshal_with(user_fields_default, envelope='data', skip_none=True)
     def patch(self, public_id):
+        if g.user['public_id'] != public_id and not g.user['admin']:
+            ns.abort(401, custom='No user found with the provided identifier.')
+
         user = User.query.filter_by(public_id=public_id).first()
         if not user:
             ns.abort(404, custom='No user found with the provided id.')

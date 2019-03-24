@@ -22,10 +22,10 @@ def get_accept_content_type_headers():
     return {'Accept': 'application/json', 'Content-Type': 'application/json'}
 
 
-def get_authorization_header():
+def get_authorization_header(token=''):
     '''Test helper to set Authorization header'''
     authorization_headers = get_accept_content_type_headers()
-    authorization_headers['Authorization'] = TOKEN
+    authorization_headers['Authorization'] = f'Bearer {token}'
     return authorization_headers
 
 
@@ -39,10 +39,11 @@ def create_user(client, username, email, password):
     return response
 
 
-def get_a_user(client, public_id):
+def get_a_user(client, public_id, token):
     # Construct url with user.public_id as argument value.
+    # Must set Authorization header in request
     url = url_for('api.user_resource', public_id=public_id, _external=True)
-    response = client.get(url, headers=get_accept_content_type_headers())
+    response = client.get(url, headers=get_authorization_header(token))
     return response
 
 
@@ -94,7 +95,7 @@ def test_get_user(client):
     user = User.query.get(user_id)
 
     # Get specific user and parsed data
-    get_user_response = get_a_user(client, user.public_id)
+    get_user_response = get_a_user(client, public_id=user.public_id, token=token)
     get_user_response_data = json.loads(get_user_response.get_data(as_text=True))[
         'data'
     ]
@@ -120,7 +121,7 @@ def test_update_user(client):
     url = url_for('api.user_resource', public_id=user.public_id, _external=True)
     data = dict(username='georgewashinton', email='george@gmail.com')
     patch_user_response = client.patch(
-        url, headers=get_accept_content_type_headers(), data=json.dumps(data)
+        url, headers=get_authorization_header(token), data=json.dumps(data)
     )
     patch_user_response_data = json.loads(patch_user_response.get_data(as_text=True))[
         'data'
@@ -144,5 +145,5 @@ def test_delete_user(client):
     user = User.query.get(user_id)
 
     url = url_for('api.user_resource', public_id=user.public_id, _external=True)
-    delete_user_response = client.delete(url, headers=get_accept_content_type_headers())
+    delete_user_response = client.delete(url, headers=get_authorization_header(token))
     assert delete_user_response.status_code == 204

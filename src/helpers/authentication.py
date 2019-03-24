@@ -82,6 +82,7 @@ class Authentication:
                 'status': 'success',
                 'data': {
                     'user_id': user.id,
+                    'public_id': user.public_id,
                     'username': user.username,
                     'email': user.email,
                     'admin': user.admin,

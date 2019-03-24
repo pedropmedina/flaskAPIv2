@@ -19,6 +19,7 @@ todo_fields_nested_models = ns.inherit(
     todo_fields_default,
     {
         'id': fields.Integer,
+        'user_id': fields.Integer,
         'user': fields.Nested(user_fields_default, skip_none=True),
         'category': fields.Nested(category_fields_default, skip_none=True),
     },
@@ -27,8 +28,8 @@ todo_fields_not_nested_models = ns.inherit(
     'TodoUserPublicId',
     todo_fields_default,
     {
-        'user': fields.String(required=True),
-        'category': fields.String(min_length=2, required=True),
+        # 'user': fields.String(required=True),
+        'category': fields.String(min_length=2, required=True)
     },
 )
 
@@ -37,16 +38,18 @@ todo_fields_not_nested_models = ns.inherit(
 @ns.param('id', 'Todo\'s intifier')
 @ns.response(404, 'No todo found with the provided id.')
 class TodoResource(Resource):
+    @Authorization.authorize_user
     @ns.marshal_with(todo_fields_nested_models, envelope='data', skip_none=True)
     def get(self, id):
-        todo = Todo.query.get(id)
+        todo = Todo.query.filter_by(id=id).filter_by(user_id=g.user['user_id']).first()
         if not todo:
             ns.abort(404, custom='No todo exists with given id')
         return todo
 
+    @Authorization.authorize_user
     @ns.marshal_with(todo_fields_nested_models, envelope='data', skip_none=True)
     def patch(self, id):
-        todo = Todo.query.get(id)
+        todo = Todo.query.filter_by(id=id).filter_by(user_id=g.user['user_id']).first()
         if not todo:
             ns.abort(404, custom='No todo exists with given id.')
         data = request.json
@@ -56,8 +59,9 @@ class TodoResource(Resource):
             db.session.commit()
         return todo
 
+    @Authorization.authorize_user
     def delete(self, id):
-        todo = Todo.query.get(id)
+        todo = Todo.query.filter_by(id=id).filter_by(user_id=g.user['user_id']).first()
         if not todo:
             ns.abort(404, custom='No todo exists with given id.')
         db.session.delete(todo)
@@ -73,16 +77,16 @@ class TodoListResource(Resource):
         todos = Todo.query.filter_by(user_id=g.user['user_id']).all()
         return todos
 
+    @Authorization.authorize_user
     @ns.expect(todo_fields_not_nested_models, validate=True)
     def post(self):
         try:
             data = request.json
             todo_name = data['name']
-            user_public_id = data['user']
             todo_category = data['category']
 
             # Query user
-            user = User.query.filter_by(public_id=user_public_id).first()
+            user = User.query.get(g.user['user_id'])
             if not user:
                 ns.abort(404, custom='No user found with provided id.')
 
