@@ -44,7 +44,7 @@ pip install -r requirements.txt # install required packages in virtual env
 Supposing you have PostgreSQL installed and running, create a database
 in order to complete migration steps:
 ```bash
-psql -O [postgres user] [database name] # creates databse under given user
+createdb -O [postgres user] [database name] # creates databse under given user
 flask db migrate # migrates changes in databse
 flask db upgrade # upgrades database
 ```
