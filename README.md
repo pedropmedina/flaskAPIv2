@@ -28,13 +28,34 @@ or how to implement certain funcionalities.
 ## Code Style
 
 I'm using [Black](https://black.readthedocs.io/en/stable/) for code formatting.
-I have configure Black for usage of single quotes. I find easier and faster to use 
-single over double quotes. You can do so by setting the --skip-string-normalization in
+I have configured Black for usage of single quotes. I find easier and faster to use 
+single over double quotes. You can do so by setting the --skip-string-normalization flag in
 your editor of choice. The rest is Black defaults. Check Black's docs.
 
 ## Usage
 
-Since Flask is configure with the FLASK_ENV in config. Simple run the app by:
-```pyhton
+Setup the virtual environment in the project's root directory
+```bash
+python3 -m venv .venv # create virtual environment
+source .venv/bin/activate # activates virtual environment
+pip install -r requirements.txt # install required packages in virtual env
+```
+
+Supposing you have PostgreSQL installed and running, create a database
+in order to complete migration steps:
+```bash
+psql -O [postgres user] [database name] # creates databse under given user
+flask db migrate # migrates changes in databse
+flask db upgrade # upgrades database
+```
+
+With the steps above completed, simply run the app as shown below.
+Since Flask is configured with the FLASK_ENV in config, Flask takes cares of the rest
+```bash
 flask run
+```
+
+To run the tests simply run pytest from within the root directory
+```bash
+pytest -v
 ```
