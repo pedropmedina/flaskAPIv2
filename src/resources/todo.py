@@ -34,7 +34,7 @@ todo_fields_not_nested_models = ns.inherit(
 )
 
 
-@ns.route('/<int:id>')
+@ns.route('/<int:id>', endpoint='todo_resource')
 @ns.param('id', 'Todo\'s intifier')
 @ns.response(404, 'No todo found with the provided id.')
 class TodoResource(Resource):
@@ -69,7 +69,7 @@ class TodoResource(Resource):
         return {'status': 'success', 'message': 'Todo was deleted.'}
 
 
-@ns.route('/')
+@ns.route('/', endpoint='todo_list_resource')
 class TodoListResource(Resource):
     @Authorization.authorize_user
     @ns.marshal_list_with(todo_fields_nested_models, envelope='data', skip_none=True)

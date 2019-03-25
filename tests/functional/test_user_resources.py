@@ -1,20 +1,12 @@
-from datetime import datetime, timedelta
-from flask import current_app, json, url_for, json
+from flask import url_for, json
 import jwt
 
-from src.models import db
 from src.models.user import User
 from src.config import secret_key
 
 TEST_USERNAME = 'jamesmadison'
 TEST_EMAIL = 'james@email.com'
 TEST_PASSWORD = 'pass123'
-PAYLOAD = {
-    'sub': 1,
-    'iat': datetime.utcnow(),
-    'exp': datetime.utcnow() + timedelta(days=1),
-}
-TOKEN = jwt.encode(PAYLOAD, secret_key, algorithm='HS256').decode('utf-8')
 
 
 def get_accept_content_type_headers():
@@ -40,6 +32,7 @@ def create_user(client, username, email, password):
 
 
 def get_a_user(client, public_id, token):
+    '''Test helper to get user a user and return response'''
     # Construct url with user.public_id as argument value.
     # Must set Authorization header in request
     url = url_for('api.user_resource', public_id=public_id, _external=True)
