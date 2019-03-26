@@ -9,13 +9,16 @@ from .user import user_fields_default, User
 from .category import category_fields_default
 
 from ..helpers.authorization import Authorization
+from ..helpers.pagination import PaginationHelper
 
 ns = Namespace('todo', description='Todo\'s related endpoint operations.')
+# default field "name" required for both marshal_with and expect
 todo_fields_default = ns.model(
     'Todo', {'name': fields.String(required=True, min_length=2)}
 )
+# Use for marshal_with
 todo_fields_nested_models = ns.inherit(
-    'TodoNestedUser',
+    'TodoNestedModels',
     todo_fields_default,
     {
         'id': fields.Integer,
@@ -24,12 +27,22 @@ todo_fields_nested_models = ns.inherit(
         'category': fields.Nested(category_fields_default, skip_none=True),
     },
 )
+# Use for expect
 todo_fields_not_nested_models = ns.inherit(
-    'TodoUserPublicId',
+    'TodoNotNestedModels',
     todo_fields_default,
+    {'category': fields.String(min_length=2, required=True)},
+)
+# Use for marshal_with paginated results
+todo_fields_paginated_nested_models = ns.model(
+    'TodoPaginated',
     {
-        # 'user': fields.String(required=True),
-        'category': fields.String(min_length=2, required=True)
+        'results': fields.Nested(
+            todo_fields_nested_models, skip_none=True, as_list=True
+        ),
+        'previous': fields.String(),
+        'next': fields.String(),
+        'count': fields.Integer,
     },
 )
 
@@ -72,9 +85,17 @@ class TodoResource(Resource):
 @ns.route('/', endpoint='todo_list_resource')
 class TodoListResource(Resource):
     @Authorization.authorize_user
-    @ns.marshal_list_with(todo_fields_nested_models, envelope='data', skip_none=True)
+    @ns.marshal_with(
+        todo_fields_paginated_nested_models, envelope='data', skip_none=True
+    )
     def get(self):
-        todos = Todo.query.filter_by(user_id=g.user['user_id']).all()
+        pagination_helper = PaginationHelper(
+            request=request,
+            query=Todo.query,
+            resource_url_for='api.todo_list_resource',
+            user_id=g.user['user_id'],
+        )
+        todos = pagination_helper.paginate_query()
         return todos
 
     @Authorization.authorize_user

@@ -6,7 +6,7 @@ load_dotenv()
 
 class Config:
     SECRET_KEY = os.getenv('SECRET_KEY')
-    PAGINATION_PAGE_SIZE = 5
+    PAGINATION_PAGE_SIZE = 2
     PAGINATION_PAGE_ARGUMENT_NAME = 'page'
     UPLOAD_FOLDER = (
         '/Users/pedropmedina/Documents/playground/python/flask/flaskAPIv2/src/uploads'

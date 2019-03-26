@@ -10,10 +10,12 @@ class Authentication:
         '''
         Authentication helper to be used at login.
         '''
-        user = User.query.filter_by(username=username).first()
-        is_password_correct = user.check_password(password=password)
-
-        if not user or not is_password_correct:
+        try:
+            user = User.query.filter_by(username=username).first()
+            is_password_correct = user.check_password(password=password)
+            if not is_password_correct:
+                raise AttributeError
+        except AttributeError:
             return {'status': 'fail', 'message': 'Wrong credentials. Try again.'}
 
         token = User.jwt_encode(user_id=user.id)
