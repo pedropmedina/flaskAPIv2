@@ -91,11 +91,17 @@ class UserListResource(Resource):
             }
             return response_dict, 409  # Conflict
         else:
+            # check_password_strength return tuple (msg, bool)
+            message, ok_password = User.check_password_strength(data['password'])
+            if not ok_password:
+                return {'status': 'fail', 'message': message}, 400
+
             new_user = User(
                 username=data['username'],
                 email=data['email'],
                 password=data['password'],
             )
+
             db.session.add(new_user)
             db.session.commit()
             token = User.jwt_encode(user_id=new_user.id)

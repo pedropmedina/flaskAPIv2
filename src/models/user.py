@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from uuid import uuid4
+import re
 import jwt
 
 from . import db
@@ -37,6 +38,23 @@ class User(db.Model):
 
     def check_password(self, password):
         return bcrypt.check_password_hash(self.hash_password, password)
+
+    @classmethod
+    def check_password_strength(cls, password):
+        # check password is between range 8 to 32
+        if len(password) < 8:
+            return ('Password is too short. Must be at leaset 8 characters.', False)
+        if len(password) > 32:
+            return ('Password is too long. Must be less than 32 characters.', False)
+        # check password includes one uppercase and lowercase character
+        if re.search('[A-Z]', password) is None:
+            return ('Password must include at least an uppercase character.', False)
+        if re.search('[a-z]', password) is None:
+            return ('Password must include at least a lowercase character.', False)
+        # check password includes one symbol
+        if re.search(r'[!#$%&\'()*+,-./[\\\]^_`{|}~"\]]', password) is None:
+            return ('Password must include at least one symbol.', False)
+        return ('', True)
 
     @staticmethod
     def jwt_encode(user_id):
