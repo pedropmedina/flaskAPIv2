@@ -59,14 +59,15 @@ def test_get_todos(client):
     url = construct_url()
     todo_response = client.get(url, headers=get_authorization_header(token))
     todo_response_data = json.loads(todo_response.get_data(as_text=True))['data']
+    todo_data_results = todo_response_data['results']
 
     # assertions
     assert todo_response.status_code == 200
-    assert isinstance(todo_response_data, list)
-    assert len(todo_response_data) == 1
-    assert todo_response_data[0]['name'] == TODO_NAME
-    assert todo_response_data[0]['user']['username'] == TEST_USERNAME
-    assert todo_response_data[0]['user']['email'] == TEST_EMAIL
+    assert isinstance(todo_data_results, list)
+    assert len(todo_data_results) == 1
+    assert todo_data_results[0]['name'] == TODO_NAME
+    assert todo_data_results[0]['user']['username'] == TEST_USERNAME
+    assert todo_data_results[0]['user']['email'] == TEST_EMAIL
 
 
 def test_create_todo(client):

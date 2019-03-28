@@ -6,7 +6,7 @@ from src.config import secret_key
 
 TEST_USERNAME = 'jamesmadison'
 TEST_EMAIL = 'james@email.com'
-TEST_PASSWORD = 'pass123'
+TEST_PASSWORD = 'Password123!'
 
 
 def get_accept_content_type_headers():
