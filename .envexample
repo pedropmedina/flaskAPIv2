@@ -1,0 +1,15 @@
+# use python-dotenv: https://github.com/theskumar/python-dotenv
+# to automatically load environment variables.
+# name this file .env
+
+SECRET_KEY='somekeyhere'
+
+DB_NAME=nameofdatabase
+DB_USERNAME=databaseusername
+DB_PASSWORD=databasepassword
+DB_HOST=hostname
+
+DB_NAME_TEST=testingdatabasename
+DB_USERNAME_TEST=testingdatabaseusername
+DB_PASSWORD_TEST=testingdatabasepassword
+DB_HOST_TEST=testinghost

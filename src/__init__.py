@@ -2,18 +2,18 @@ from flask import Flask
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
 
-from .config import envsconfig
+from src.config import envsconfig
 
 bcrypt = Bcrypt()
 
 
 def create_app(env='dev'):
-    from .models import db
-    from .models.user import User
-    from .models.todo import Todo
-    from .models.category import Category
-    from .models.blacklist import Blacklist
-    from .resources import bp
+    from src.models import db
+    from src.models.user import User
+    from src.models.todo import Todo
+    from src.models.category import Category
+    from src.models.blacklist import Blacklist
+    from src.resources import bp
 
     # app instance
     app = Flask(__name__)
