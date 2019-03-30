@@ -16,7 +16,6 @@ api = Api(
     description='A todo API with basic operations',
 )
 
-
 api.add_namespace(ns_user, path='/users')
 api.add_namespace(ns_todo, path='/todos')
 api.add_namespace(ns_category, path='/categories')
