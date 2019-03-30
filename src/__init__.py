@@ -7,7 +7,7 @@ from src.config import envsconfig
 bcrypt = Bcrypt()
 
 
-def create_app(env='dev'):
+def create_app(env='prod'):
     from src.models import db
     from src.models.user import User
     from src.models.todo import Todo

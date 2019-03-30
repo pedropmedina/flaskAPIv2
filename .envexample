@@ -1,15 +1,27 @@
 # use python-dotenv: https://github.com/theskumar/python-dotenv
 # to automatically load environment variables.
-# name this file .env
+# name this module .env
+
+# these two environments are used during development enabling flask run
+FLASK_APP=path/to/module/where/app/is/located
+FLASK_ENV=development # It can be either development or production (default)
 
 SECRET_KEY='somekeyhere'
 
+# use in production
 DB_NAME=nameofdatabase
 DB_USERNAME=databaseusername
 DB_PASSWORD=databasepassword
 DB_HOST=hostname
 
+# use in testing
 DB_NAME_TEST=testingdatabasename
 DB_USERNAME_TEST=testingdatabaseusername
 DB_PASSWORD_TEST=testingdatabasepassword
 DB_HOST_TEST=testinghost
+
+# use in dev
+DB_NAME_PROD_DEV=developmentdatabasename
+DB_USERNAME_PROD_DEV=developmentdatabaseusername
+DB_PASSWORD_PROD_DEV=developmentdatabasepassword
+DB_HOST_PROD_DEV=developmenthost
