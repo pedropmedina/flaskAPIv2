@@ -1,3 +1,4 @@
+from uuid import uuid4
 from flask_restplus import Namespace, fields, Resource
 from flask import request, make_response, g
 from werkzeug.utils import secure_filename
@@ -97,6 +98,7 @@ class UserListResource(Resource):
                 return {'status': 'fail', 'message': message}, 400
 
             new_user = User(
+                public_id=str(uuid4()),
                 username=data['username'],
                 email=data['email'],
                 password=data['password'],

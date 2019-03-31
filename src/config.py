@@ -16,10 +16,10 @@ class Config:
     ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
     # default DB_URI to production, else use _DEV ending during development
     DB_URI = compose_database_uri(
-        os.getenv('DB_USERNAME_DEV', 'DB_USERNAME'),
-        os.getenv('DB_PASSWORD_DEV', 'DB_PASSWORD'),
-        os.getenv('DB_HOST_DEV', 'DB_HOST'),
-        os.getenv('DB_NAME_DEV', 'DB_NAME'),
+        os.getenv('DB_USERNAME_DEV', os.environ['DB_USERNAME']),
+        os.getenv('DB_PASSWORD_DEV', os.environ['DB_PASSWORD']),
+        os.getenv('DB_HOST_DEV', os.environ['DB_HOST']),
+        os.getenv('DB_NAME_DEV', os.environ['DB_NAME']),
     )
     SQLALCHEMY_DATABASE_URI = DB_URI
 
