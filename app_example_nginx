@@ -1,0 +1,18 @@
+# Server block configuration file template for Nginx to pass web requests
+# to the socket file (app.sock) located in the project's root directory
+
+# Make sure to modify file to match your sever configurations!!!
+
+# This file goes under /etc/nginx/sites-available/
+# Then we need to create symlink to this file from /etc/nginx/sites-enabled
+
+
+server {
+    listen 80;
+    server_name your_domain www.your_domain
+
+        location / {
+            include uwsgi_params;
+            uwsgi_pass unix:/home/user/projectname/app.sock;
+        }
+}

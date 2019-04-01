@@ -1,0 +1,21 @@
+# This is a systemd unit file template to be used with in Ubuntu
+# to automatically start uWSGI and Flask app on server boots.
+# The file can be name anything as long as the extension is .service
+# This file is placed under /etc/systemd/system/ directory
+# Once the file is in placed in the correct direcory, start and enable app
+# sudo systemctl start app
+# sudo systemctl enable app
+
+[Unit]
+Description=uWSGI instane to server flask api
+After=network.target
+
+[Service]
+User=userwhoownsproject
+Group=www-data
+WorkingDirectory=/home/user/projectname
+Environment="PATH=/home/user/projectname/virtualenvironment/bin"
+ExecStart=/home/user/porjectname/virtualenvironment/bin/uwsgi --ini app_uwsgi.ini
+
+[Install]
+WantedBy=multi-user.target
